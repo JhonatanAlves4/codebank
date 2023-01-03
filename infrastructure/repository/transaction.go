@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/JhonatanAlves4/codebank/domain"
 )
@@ -13,6 +14,18 @@ type TransactionRepositoryDb struct {
 // As a constructor
 func NewTransactionRepositoryDb(db *sql.DB) *TransactionRepositoryDb {
 	return &TransactionRepositoryDb{db: db}
+}
+
+func (t *TransactionRepositoryDb) GetCreditCard(creditCard domain.CreditCard) (domain.CreditCard, error) {
+	var c domain.CreditCard
+	stmt, err := t.db.Prepare("select id, balance, balance_limit from credit_cards where number=$1")
+	if err != nil {
+		return c, err
+	}
+	if err = stmt.QueryRow(creditCard.Number).Scan(&c.ID, &c.Balance, &c.Limit); err != nil {
+		return c, errors.New("credit card does not exists")
+	}
+	return c, nil
 }
 
 func (t *TransactionRepositoryDb) SaveTransaction(transaction domain.Transaction, creditCard domain.CreditCard) error {
@@ -75,6 +88,6 @@ func (t *TransactionRepositoryDb) CreateCreditCard(creditCard domain.CreditCard)
 	err = stmt.Close()
 	
 	if err != nil { return err }
-	
+
 	return nil
 }
