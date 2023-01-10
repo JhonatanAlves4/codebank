@@ -1,14 +1,17 @@
 package usecase
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/JhonatanAlves4/codebank/domain"
 	"github.com/JhonatanAlves4/codebank/dto"
+	"github.com/JhonatanAlves4/codebank/infrastructure/kafka"
 )
 
 type UseCaseTransaction struct {
 	TransactionRepository domain.TransactionRepository
+	KafkaProducer kafka.KafkaProducer
 }
 
 func NewUseCaseTransaction(transactionRepository domain.TransactionRepository) UseCaseTransaction {
@@ -29,6 +32,17 @@ func (u UseCaseTransaction) ProcessTransaction(transactionDTO dto.TransactionDTO
 
 	err = u.TransactionRepository.SaveTransaction(*t, *creditCard)
 	if err != nil { return domain.Transaction{}, err }
+
+	transactionDTO.ID = t.ID
+	transactionDTO.CreatedAt = t.CreatedAt
+	transactionJson, err := json.Marshal(transactionDTO)
+	if err != nil {
+		return domain.Transaction{}, err
+	}
+	err = u.KafkaProducer.Publish(string(transactionJson), "payments")
+	if err != nil {
+		return domain.Transaction{}, err
+	}
 
 	return *t, nil
 }
