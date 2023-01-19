@@ -8,19 +8,7 @@ import {
   CardMedia,
   Typography,
 } from "@material-ui/core";
-import { Product } from "@/model";
-
-const products: Product[] = [
-  {
-    id: "uuid",
-    name: "produto",
-    description: "descrição produto",
-    price: 49.99,
-    image_url: "https://source.unsplash.com/random?product",
-    slug: "produto-teste",
-    created_at: "2023-01-19T00:00:00",
-  },
-];
+import { Product, products } from "@/model";
 
 export default function ProductsListPage() {
   return (
