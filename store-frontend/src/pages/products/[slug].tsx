@@ -8,17 +8,15 @@ import {
   CardMedia,
   Typography,
 } from "@material-ui/core";
-import { Product, products } from "@/model";
-import { NextPage } from "next";
+import { Product } from "@/model";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import http from "@/http";
 
 interface ProductDetailPageProps {
   product: Product;
 }
 
-//const ProductDetailPage: NextPage<ProductDetailPageProps> = ({product,}) => {
-const ProductDetailPage = () => {
-  const product = products[0];
-
+const ProductDetailPage: NextPage<ProductDetailPageProps> = ({product}) => {
   return (
     <>
       <Head>
@@ -49,3 +47,25 @@ const ProductDetailPage = () => {
 };
 
 export default ProductDetailPage;
+
+export const getStaticProps: GetStaticProps<ProductDetailPageProps, {slug: string}> = async (context) => {
+  const { slug } = context.params!;
+  const { data: product } = await http.get(`products/${slug}`);
+  
+  return {
+    props: {
+      product,
+      //products: response.data
+    },
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async (context) => {
+  const { data: products } = await http.get(`products`);
+
+  const paths = products.map((p: Product) => ({
+    params: {slug: p.slug}
+  }))
+
+  return {paths, fallback: "blocking"}
+}
