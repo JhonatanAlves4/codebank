@@ -1,5 +1,4 @@
 import Head from "next/head";
-import styles from "@/styles/Home.module.css";
 import {
   Button,
   Card,
@@ -20,8 +19,6 @@ export default function ProductsListPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <div className={styles.container}>
           <Typography
             component="h1"
             variant="h3"
@@ -45,8 +42,6 @@ export default function ProductsListPage() {
               </CardActions>
             </Card>
           ))}
-        </div>
-      </main>
     </>
   );
 }
