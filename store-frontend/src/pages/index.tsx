@@ -8,10 +8,16 @@ import {
   Grid,
   Typography,
 } from "@material-ui/core";
-import { Product, products } from "@/model";
+import { Product } from "@/model";
 import Link from "next/link";
+import { GetServerSideProps, NextPage } from "next";
+import http from "@/http";
 
-export default function ProductsListPage() {
+interface ProductsListPageProps {
+  products: Product[];
+}
+
+const ProductsListPage: NextPage<ProductsListPageProps> = ({ products }) => {
   return (
     <>
       <Head>
@@ -43,7 +49,7 @@ export default function ProductsListPage() {
                   as={`/products/${product.slug}`}
                   passHref
                 >
-                  <Button size="small" color="primary" component="a">
+                  <Button size="small" color="primary">
                     Detalhes
                   </Button>
                 </Link>
@@ -54,4 +60,19 @@ export default function ProductsListPage() {
       </Grid>
     </>
   );
-}
+};
+
+export default ProductsListPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { data: products } = await http.get("products");
+  //const response = await http.get('products');
+  console.log(products);
+
+  return {
+    props: {
+      products,
+      //products: response.data
+    },
+  };
+};
