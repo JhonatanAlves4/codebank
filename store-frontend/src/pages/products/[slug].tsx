@@ -57,6 +57,7 @@ export const getStaticProps: GetStaticProps<ProductDetailPageProps, {slug: strin
       product,
       //products: response.data
     },
+    revalidate: 1 * 60 * 2
   };
 };
 
