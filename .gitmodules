@@ -1,0 +1,3 @@
+[submodule "store-api"]
+	path = store-api
+	url = https://github.com/JhonatanAlves4/codebank
