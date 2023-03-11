@@ -1,3 +1,5 @@
 # init migration
 
 npm run typeorm migration:create -- --name create-products-table
+
+npm run typeorm migration:run
